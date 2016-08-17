@@ -1,4 +1,0 @@
-[0m[[0minfo[0m] [0m:: delivering :: default#chatterbox_2.10;0.1-SNAPSHOT :: 0.1-SNAPSHOT :: integration :: Wed Aug 17 11:22:05 PDT 2016[0m
-[0m[[0mdebug[0m] [0m	options = status=integration pubdate=Wed Aug 17 11:22:05 PDT 2016 validate=true resolveDynamicRevisions=true merge=true resolveId=null pubBranch=null[0m
-[0m[[0minfo[0m] [0m	delivering ivy file to /Volumes/SanDisk128g/Development/chatterbox/target/scala-2.10/ivy-0.1-SNAPSHOT.xml[0m
-[0m[[0mdebug[0m] [0m	deliver done (46ms)[0m
