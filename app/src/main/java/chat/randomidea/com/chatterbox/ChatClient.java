@@ -8,6 +8,6 @@ import com.unity3d.player.UnityPlayer;
 public class ChatClient {
 
     public void sayHello() {
-        UnityPlayer.UnitySendMessage("HyperCube", "sayHello", "hi there");
+        UnityPlayer.UnitySendMessage("HyperCube", "SayHello", "hi there");
     }
 }
