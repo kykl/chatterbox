@@ -27,6 +27,8 @@ public class ChatClient {
 
     public ChatClient(String host, int port) {
         this(ManagedChannelBuilder.forAddress(host, port).usePlaintext(true));
+        logger.info("Running chat client for" + host + ":" + port);
+
     }
 
     /** Construct client for accessing RouteGuide server using the existing channel. */
@@ -42,6 +44,7 @@ public class ChatClient {
     }
 
     public StreamObserver<EventSubscription> setupBidirectionalStream() {
+        logger.info("Setting up bidirectional stream");
         return asyncStub.subscribeEvents(new StreamObserver<Event>() {
             @Override
             public void onNext(Event value) {
