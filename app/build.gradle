@@ -11,7 +11,7 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
-        multiDexEnabled false  // this line will solve this problem
+        multiDexEnabled true  // this line will solve this problem
     }
     buildTypes {
         release {
