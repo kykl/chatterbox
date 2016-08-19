@@ -46,7 +46,7 @@ dependencies {
 
 //task to delete the old jar
 task deleteOldJar(type: Delete) {
-    delete 'release/AndroidPlugin.jar'
+    delete 'release/unity-android-plugin.jar'
 }
 
 //task to export contents as jar
