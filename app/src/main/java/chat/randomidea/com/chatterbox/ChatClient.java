@@ -49,11 +49,13 @@ public class ChatClient {
             @Override
             public void onNext(Event value) {
                 String eventString = value.toString();
+                logger.info("Got message:" + eventString);
                 UnityPlayer.UnitySendMessage("HyperCube", "SayHello", eventString);
             }
 
             @Override
             public void onError(Throwable t) {
+                logger.warning(t.toString());
                 Status status = Status.fromThrowable(t);
                 logger.log(Level.WARNING, "RouteChat Failed: {0}", status);
             }
@@ -66,6 +68,7 @@ public class ChatClient {
     }
 
     public void sayHello() {
+        logger.info("Saying hello for the first time!");
         eventSubscriptionStreamObserver.onNext(
                 EventSubscription.newBuilder()
                         .setAppId(1L)
