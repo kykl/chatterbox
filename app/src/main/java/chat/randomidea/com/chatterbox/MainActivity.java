@@ -7,7 +7,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        new ChatClient().sayHello();
+        new ChatClient().setupBidirectionalStream();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
     }
