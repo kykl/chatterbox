@@ -25,10 +25,9 @@ public class ChatClient {
     private final ChatGrpc.ChatStub asyncStub;
     private final StreamObserver<EventSubscription> eventSubscriptionStreamObserver;
 
-    public ChatClient(String host, int port) {
-        this(ManagedChannelBuilder.forAddress(host, port).usePlaintext(true));
-        logger.info("Running chat client for" + host + ":" + port);
-
+    public ChatClient(String target) {
+        this(ManagedChannelBuilder.forTarget(target).usePlaintext(true));
+        logger.info("Running chat client for " + target);
     }
 
     /** Construct client for accessing RouteGuide server using the existing channel. */
