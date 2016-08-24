@@ -7,8 +7,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import io.bigfast.ChatGrpc;
-import io.bigfast.ChatOuterClass.Event;
-import io.bigfast.ChatOuterClass.EventSubscription;
+import io.bigfast.ChatOuterClass.Channel;
+import io.bigfast.ChatOuterClass.Channel.Message;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.Status;
@@ -23,7 +23,7 @@ public class ChatClient {
     private final ManagedChannel channel;
     private final ChatGrpc.ChatBlockingStub blockingStub;
     private final ChatGrpc.ChatStub asyncStub;
-    private final StreamObserver<EventSubscription> eventSubscriptionStreamObserver;
+    private final StreamObserver<Message> eventSubscriptionStreamObserver;
 
     public ChatClient(String host, int port) {
         this(ManagedChannelBuilder.forAddress(host, port).usePlaintext(true));
@@ -42,11 +42,11 @@ public class ChatClient {
         channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
 
-    public StreamObserver<EventSubscription> setupBidirectionalStream() {
+    public StreamObserver<Message> setupBidirectionalStream() {
         logger.info("Setting up bidirectional stream");
-        return asyncStub.subscribeEvents(new StreamObserver<Event>() {
+        return asyncStub.channelMessageStream(new StreamObserver<Message>() {
             @Override
-            public void onNext(Event value) {
+            public void onNext(Message value) {
                 String eventString = value.toString();
                 logger.info("Got message:" + eventString);
                 UnityPlayer.UnitySendMessage("HyperCube", "SayHello", eventString);
@@ -69,10 +69,28 @@ public class ChatClient {
     public void sayHello() {
         logger.info("Saying hello for the first time!");
         eventSubscriptionStreamObserver.onNext(
-                EventSubscription.newBuilder()
-                        .setAppId(1L)
-                        .setAuth(1L)
-                        .setUserId(1L).build()
+                Message.newBuilder()
+                        .setChannelId(1L)
+                        .setUserId(2L)
+                        .setContent("ping")
+                        .build()
         );
+
+        eventSubscriptionStreamObserver.onNext(
+                Message.newBuilder()
+                        .setChannelId(1L)
+                        .setUserId(2L)
+                        .setContent("ping")
+                        .build()
+        );
+
+        eventSubscriptionStreamObserver.onCompleted();
+
+        Channel channel = blockingStub.channelHistory(
+                Channel.Get.newBuilder().setChannelId(1L).build()
+        );
+
+        logger.info("Got a new channel ->");
+        logger.info(channel.toString());
     }
 }
