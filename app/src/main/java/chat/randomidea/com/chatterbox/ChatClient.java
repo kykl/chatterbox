@@ -1,7 +1,9 @@
 package chat.randomidea.com.chatterbox;
 
+import com.google.protobuf.ByteString;
 import com.unity3d.player.UnityPlayer;
 
+import java.nio.ByteBuffer;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -46,10 +48,9 @@ public class ChatClient {
         logger.info("Setting up bidirectional stream");
         return asyncStub.channelMessageStream(new StreamObserver<Message>() {
             @Override
-            public void onNext(Message value) {
-                String eventString = value.toString();
-                logger.info("Got message:" + eventString);
-                UnityPlayer.UnitySendMessage("HyperCube", "SayHello", eventString);
+            public void onNext(Message message) {
+                logger.info("Got message:" + message);
+                UnityPlayer.UnitySendMessage("HyperCube", "SayHello", message.getContent());
             }
 
             @Override
