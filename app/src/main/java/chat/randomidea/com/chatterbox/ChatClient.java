@@ -1,5 +1,7 @@
 package chat.randomidea.com.chatterbox;
 
+import android.util.Base64;
+
 import com.google.protobuf.ByteString;
 import com.unity3d.player.UnityPlayer;
 
@@ -15,6 +17,7 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
+
 
 /**
  * ChatClient
@@ -68,30 +71,37 @@ public class ChatClient {
     }
 
     public void sayHello() {
+        String message = "{text: 'ping'}";
+        ByteString b64Msg = Base64.encode(message.getBytes("UTF-8"), 0);
         logger.info("Saying hello for the first time!");
         eventSubscriptionStreamObserver.onNext(
                 Message.newBuilder()
-                        .setChannelId(1L)
-                        .setUserId(2L)
-                        .setContent("ping")
+                        .setChannelId("1")
+                        .setUserId("2")
+                        .setContent(b64Msg)
                         .build()
         );
 
         eventSubscriptionStreamObserver.onNext(
                 Message.newBuilder()
-                        .setChannelId(1L)
-                        .setUserId(2L)
-                        .setContent("ping")
+                        .setChannelId("1")
+                        .setUserId("2")
+                        .setContent(b64Msg)
                         .build()
         );
 
         eventSubscriptionStreamObserver.onCompleted();
 
         Channel channel = blockingStub.channelHistory(
-                Channel.Get.newBuilder().setChannelId(1L).build()
+                Channel.Get.newBuilder().setChannelId("1").build()
         );
 
         logger.info("Got a new channel ->");
         logger.info(channel.toString());
     }
+
+    public void sendMessage(String channelId) {
+        return;
+    }
+
 }
