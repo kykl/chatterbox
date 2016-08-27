@@ -6,48 +6,32 @@ message Empty {}
 
 message Channel {
     message Message {
-        uint64 id = 1;
-        uint64 channelId = 2;
-        uint64 userId = 3;
-        string content = 4;
+        string id = 1;
+        string channelId = 2;
+        string userId = 3;
+        bytes content = 4;
     }
 
     message Get {
-        uint64 channelId = 1;
+        string channelId = 1;
         uint32 beforeTs = 2;
         uint32 batchSize = 3;
     }
 
-    message Create {
-        uint64 channelId = 1;
-    }
-
     message Subscription {
         message Add {
-            uint64 channelId = 1;
-            uint64 userId = 2;
+            string channelId = 1;
+            string userId = 2;
         }
 
         message Remove {
-            uint64 channelId = 1;
-            uint64 userId = 2;
+            string channelId = 1;
+            string userId = 2;
         }
-
-        message Get {
-            uint64 channelId = 1;
-            uint32 batchSize = 2;
-            enum SortBy {
-                RECENT = 0;
-                VOLUME = 1;
-            }
-        }
-
-        repeated uint64 users = 1;
     }
 
-    uint64 id = 1;
+    string id = 1;
     repeated Message messages = 2;
-    Subscription subscription = 3;
 }
 
 // The chat service definition.
