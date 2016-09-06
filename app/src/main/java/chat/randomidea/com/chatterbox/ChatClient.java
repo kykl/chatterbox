@@ -21,6 +21,7 @@ import io.grpc.stub.StreamObserver;
 /**
  * ChatClient
  * Base implementation for bidirectional rpc
+ * To be used by Unity3D as a jar downstream
  */
 public class ChatClient {
     private static final Logger logger = Logger.getLogger(ChatClient.class.getName());
