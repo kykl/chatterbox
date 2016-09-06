@@ -5,7 +5,6 @@ import android.util.Base64;
 import com.google.protobuf.ByteString;
 import com.unity3d.player.UnityPlayer;
 
-import java.nio.ByteBuffer;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,7 +34,9 @@ public class ChatClient {
         logger.info("Running chat client for " + host + ":" + port);
     }
 
-    /** Construct client for accessing RouteGuide server using the existing channel. */
+    /**
+     * Construct client for accessing RouteGuide server using the existing channel.
+     */
     public ChatClient(ManagedChannelBuilder<?> channelBuilder) {
         channel = channelBuilder.build();
         blockingStub = ChatGrpc.newBlockingStub(channel);
@@ -53,7 +54,10 @@ public class ChatClient {
             @Override
             public void onNext(Message message) {
                 logger.info("Got message:" + message);
-                UnityPlayer.UnitySendMessage("HyperCube", "SayHello", message.getContent());
+                String messageB64 = message.getContent().toStringUtf8();
+                String jsonString = new String(Base64.decode(messageB64, Base64.DEFAULT));
+                logger.info("Decoding message to:" + jsonString);
+                UnityPlayer.UnitySendMessage("HyperCube", "SayHello", jsonString);
             }
 
             @Override
@@ -72,13 +76,14 @@ public class ChatClient {
 
     public void sayHello() {
         String message = "{text: 'ping'}";
-        ByteString b64Msg = Base64.encode(message.getBytes("UTF-8"), 0);
+        byte[] b64Msg = Base64.encode(message.getBytes(), Base64.DEFAULT);
+        ByteString byteStringContent = ByteString.copyFrom(b64Msg);
         logger.info("Saying hello for the first time!");
         eventSubscriptionStreamObserver.onNext(
                 Message.newBuilder()
                         .setChannelId("1")
                         .setUserId("2")
-                        .setContent(b64Msg)
+                        .setContent(byteStringContent)
                         .build()
         );
 
@@ -86,7 +91,7 @@ public class ChatClient {
                 Message.newBuilder()
                         .setChannelId("1")
                         .setUserId("2")
-                        .setContent(b64Msg)
+                        .setContent(byteStringContent)
                         .build()
         );
 
@@ -99,9 +104,4 @@ public class ChatClient {
         logger.info("Got a new channel ->");
         logger.info(channel.toString());
     }
-
-    public void sendMessage(String channelId) {
-        return;
-    }
-
 }
