@@ -77,24 +77,8 @@ public class ChatClient {
 
     public void sayHello() {
         String message = "{text: 'ping'}";
-        byte[] b64Msg = Base64.encode(message.getBytes(), Base64.DEFAULT);
-        ByteString byteStringContent = ByteString.copyFrom(b64Msg);
         logger.info("Saying hello for the first time!");
-        eventSubscriptionStreamObserver.onNext(
-                Message.newBuilder()
-                        .setChannelId("1")
-                        .setUserId("2")
-                        .setContent(byteStringContent)
-                        .build()
-        );
-
-        eventSubscriptionStreamObserver.onNext(
-                Message.newBuilder()
-                        .setChannelId("1")
-                        .setUserId("2")
-                        .setContent(byteStringContent)
-                        .build()
-        );
+        sendMessage("1", "2", message);
 
         eventSubscriptionStreamObserver.onCompleted();
 
@@ -104,5 +88,18 @@ public class ChatClient {
 
         logger.info("Got a new channel ->");
         logger.info(channel.toString());
+    }
+
+    public void sendMessage(String channelId, String userId, String messageContent) {
+        byte[] b64Msg = Base64.encode(messageContent.getBytes(), Base64.DEFAULT);
+        ByteString byteStringContent = ByteString.copyFrom(b64Msg);
+        logger.info("Sending message" + new String(b64Msg));
+        eventSubscriptionStreamObserver.onNext(
+                Message.newBuilder()
+                        .setChannelId(channelId)
+                        .setUserId(userId)
+                        .setContent(byteStringContent)
+                        .build()
+        );
     }
 }
