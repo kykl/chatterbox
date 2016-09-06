@@ -54,7 +54,7 @@ public class ChatClient {
             @Override
             public void onNext(Message message) {
                 logger.info("Got message:" + message);
-                String messageB64 = message.getContent().toStringUtf8();
+                byte[] messageB64 = message.getContent().toByteArray();
                 String jsonString = new String(Base64.decode(messageB64, Base64.DEFAULT));
                 logger.info("Decoding message to:" + jsonString);
                 UnityPlayer.UnitySendMessage("HyperCube", "SayHello", jsonString);
