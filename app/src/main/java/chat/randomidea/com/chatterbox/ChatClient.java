@@ -58,7 +58,7 @@ public class ChatClient {
                 byte[] messageB64 = message.getContent().toByteArray();
                 String jsonString = new String(Base64.decode(messageB64, Base64.DEFAULT));
                 logger.info("Decoding message to:" + jsonString);
-                UnityPlayer.UnitySendMessage("HyperCube", "SayHello", jsonString);
+                UnityPlayer.UnitySendMessage("HyperCube", "ReceiveMessage", jsonString);
             }
 
             @Override
@@ -76,7 +76,7 @@ public class ChatClient {
     }
 
     public void sayHello() {
-        String message = "{text: 'ping'}";
+        String message = "{'text':'hello!'}";
         logger.info("Saying hello for the first time!");
         sendMessage("1", "2", message);
 
