@@ -31,7 +31,7 @@ public class ChatClient {
     private final StreamObserver<Message> eventSubscriptionStreamObserver;
 
     public ChatClient(String host, int port) {
-        this(ManagedChannelBuilder.forAddress(host, port).usePlaintext(true));
+        this(ManagedChannelBuilder.forAddress(host, port));
         logger.info("Running chat client for " + host + ":" + port);
     }
 
