@@ -93,7 +93,7 @@ public class ChatClient {
     public void sendMessage(String channelId, String userId, String messageContent) {
         byte[] b64Msg = Base64.encode(messageContent.getBytes(), Base64.DEFAULT);
         ByteString byteStringContent = ByteString.copyFrom(b64Msg);
-        logger.info("Sending message" + new String(b64Msg));
+        logger.info("Sending message: " + new String(b64Msg));
         eventSubscriptionStreamObserver.onNext(
                 Message.newBuilder()
                         .setChannelId(channelId)
