@@ -2,8 +2,7 @@ syntax = "proto3";
 
 package io.bigfast;
 
-message Empty {
-}
+message Empty {}
 
 message Channel {
     message Message {
@@ -31,13 +30,9 @@ message Channel {
 
 // The messaging service definition.
 service Messaging {
-    rpc ChannelMessageStream (stream Channel.Message) returns (stream Channel.Message) {
-    }
-    rpc CreateChannel (Empty) returns (Channel) {
-    }
+    rpc ChannelMessageStream (stream Channel.Message) returns (stream Channel.Message) {}
+    rpc CreateChannel (Empty) returns (Channel) {}
 
-    rpc SubscribeChannel (Channel.Subscription.Add) returns (Empty) {
-    }
-    rpc UnsubscribeChannel (Channel.Subscription.Remove) returns (Empty) {
-    }
+    rpc SubscribeChannel (Channel.Subscription.Add) returns (Empty) {}
+    rpc UnsubscribeChannel (Channel.Subscription.Remove) returns (Empty) {}
 }
