@@ -25,7 +25,6 @@ message Channel {
     }
 
     string id = 1;
-    repeated Message messages = 2;
 }
 
 // The messaging service definition.
