@@ -1,5 +1,6 @@
 package chat.randomidea.com.chatterbox;
 
+import android.content.Context;
 import android.util.Base64;
 
 import com.google.protobuf.ByteString;
@@ -9,12 +10,16 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import io.bigfast.ChatGrpc;
-import io.bigfast.ChatOuterClass.Channel;
-import io.bigfast.ChatOuterClass.Channel.Message;
+import io.bigfast.MessagingGrpc;
+import io.bigfast.MessagingOuterClass.Channel;
+import io.bigfast.MessagingOuterClass.Channel.Message;
+import io.bigfast.MessagingOuterClass.Channel.Subscription.Add;
+import io.bigfast.MessagingOuterClass.Empty;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.Metadata;
 import io.grpc.Status;
+import io.grpc.stub.MetadataUtils;
 import io.grpc.stub.StreamObserver;
 
 
@@ -25,9 +30,10 @@ import io.grpc.stub.StreamObserver;
  */
 public class ChatClient {
     private static final Logger logger = Logger.getLogger(ChatClient.class.getName());
+    private static final String userId = "18125";
     private final ManagedChannel channel;
-    private final ChatGrpc.ChatBlockingStub blockingStub;
-    private final ChatGrpc.ChatStub asyncStub;
+    private final MessagingGrpc.MessagingBlockingStub blockingStub;
+    private final MessagingGrpc.MessagingStub asyncStub;
     private final StreamObserver<Message> eventSubscriptionStreamObserver;
 
     public ChatClient(String host, int port) {
@@ -39,9 +45,28 @@ public class ChatClient {
      * Construct client for accessing RouteGuide server using the existing channel.
      */
     public ChatClient(ManagedChannelBuilder<?> channelBuilder) {
+        Context context = UnityPlayer.currentActivity.getBaseContext();
+        String authorization = context.getString(R.string.authorization);
+        String session = context.getString(R.string.session);
         channel = channelBuilder.build();
-        blockingStub = ChatGrpc.newBlockingStub(channel);
-        asyncStub = ChatGrpc.newStub(channel);
+        Metadata metadata = new Metadata();
+        metadata.put(
+                Metadata.Key.of("AUTHORIZATION", Metadata.ASCII_STRING_MARSHALLER),
+                authorization
+        );
+        metadata.put(
+                Metadata.Key.of("X-AUTHENTICATION", Metadata.ASCII_STRING_MARSHALLER),
+                session
+        );
+        blockingStub = MetadataUtils.attachHeaders(
+                MessagingGrpc.newBlockingStub(channel),
+                metadata
+        );
+        asyncStub = MetadataUtils.attachHeaders(
+                MessagingGrpc.newStub(channel),
+                metadata
+        );
+
         eventSubscriptionStreamObserver = setupBidirectionalStream();
     }
 
@@ -76,18 +101,18 @@ public class ChatClient {
     }
 
     public void sayHello() {
+        Channel channel = blockingStub.createChannel(Empty.getDefaultInstance());
+        blockingStub.subscribeChannel(
+                Add.newBuilder()
+                        .setChannelId(channel.getId())
+                        .setUserId(userId)
+                        .build()
+        );
         String message = "{'text':'hello!'}";
         logger.info("Saying hello for the first time!");
-        sendMessage("1", "2", message);
+        sendMessage(channel.getId(), userId, message);
 
         eventSubscriptionStreamObserver.onCompleted();
-
-        Channel channel = blockingStub.channelHistory(
-                Channel.Get.newBuilder().setChannelId("1").build()
-        );
-
-        logger.info("Got a new channel ->");
-        logger.info(channel.toString());
     }
 
     public void sendMessage(String channelId, String userId, String messageContent) {
