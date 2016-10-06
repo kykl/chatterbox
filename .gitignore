@@ -7,3 +7,5 @@
 .idea
 gradle/
 app/release
+app/src/main/res/values/secrets.xml
+projectFilesBackup/
