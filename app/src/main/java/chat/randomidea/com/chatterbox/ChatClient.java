@@ -1,13 +1,10 @@
 package chat.randomidea.com.chatterbox;
 
-import android.content.Context;
 import android.util.Base64;
 
 import com.google.protobuf.ByteString;
-import com.unity3d.player.UnityPlayer;
 
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import io.bigfast.MessagingGrpc;
@@ -29,35 +26,19 @@ import io.grpc.stub.StreamObserver;
  * To be used by Unity3D as a jar downstream
  */
 public class ChatClient {
+    public static final String userId = "18126";
     private static final Logger logger = Logger.getLogger(ChatClient.class.getName());
-    private static final String userId = "18125";
     private final ManagedChannel channel;
     private final MessagingGrpc.MessagingBlockingStub blockingStub;
     private final MessagingGrpc.MessagingStub asyncStub;
     private final StreamObserver<Message> eventSubscriptionStreamObserver;
+    private final MessageHandler handler;
 
-    public ChatClient(String host, int port) {
-        this(ManagedChannelBuilder.forAddress(host, port));
+    ChatClient(String host, int port, Metadata metadata, MessageHandler messageHandler) {
         logger.info("Running chat client for " + host + ":" + port);
-    }
+        channel = ManagedChannelBuilder.forAddress(host, port).build();
+        handler = messageHandler;
 
-    /**
-     * Construct client for accessing RouteGuide server using the existing channel.
-     */
-    public ChatClient(ManagedChannelBuilder<?> channelBuilder) {
-        Context context = UnityPlayer.currentActivity.getBaseContext();
-        String authorization = context.getString(R.string.authorization);
-        String session = context.getString(R.string.session);
-        channel = channelBuilder.build();
-        Metadata metadata = new Metadata();
-        metadata.put(
-                Metadata.Key.of("AUTHORIZATION", Metadata.ASCII_STRING_MARSHALLER),
-                authorization
-        );
-        metadata.put(
-                Metadata.Key.of("X-AUTHENTICATION", Metadata.ASCII_STRING_MARSHALLER),
-                session
-        );
         blockingStub = MetadataUtils.attachHeaders(
                 MessagingGrpc.newBlockingStub(channel),
                 metadata
@@ -70,11 +51,38 @@ public class ChatClient {
         eventSubscriptionStreamObserver = setupBidirectionalStream();
     }
 
+    /**
+     * ChatClient constructor for Unity3D Player
+     *
+     * @param host          name of host
+     * @param port          port number - usually 8443
+     * @param authorization HMAC string to be used in Metadata
+     * @param session       session string to be used in Metadata
+     * @param gameObject    class name of GameObject in Unity with attached MonoBehaviour script
+     * @param receiveMethod method name for MonoBehaviour script that handles incoming message
+     */
+    public ChatClient(String host, int port, String authorization, String session, String gameObject, String receiveMethod) {
+        this(host, port, createMetadata(authorization, session), new UnityMessageHandler(gameObject, receiveMethod));
+    }
+
+    public static Metadata createMetadata(String authorization, String session) {
+        Metadata metadata = new Metadata();
+        metadata.put(
+                Metadata.Key.of("AUTHORIZATION", Metadata.ASCII_STRING_MARSHALLER),
+                authorization
+        );
+        metadata.put(
+                Metadata.Key.of("X-AUTHENTICATION", Metadata.ASCII_STRING_MARSHALLER),
+                session
+        );
+        return metadata;
+    }
+
     public void shutdown() throws InterruptedException {
         channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
 
-    public StreamObserver<Message> setupBidirectionalStream() {
+    private StreamObserver<Message> setupBidirectionalStream() {
         logger.info("Setting up bidirectional stream");
         return asyncStub.channelMessageStream(new StreamObserver<Message>() {
             @Override
@@ -83,36 +91,33 @@ public class ChatClient {
                 byte[] messageB64 = message.getContent().toByteArray();
                 String jsonString = new String(Base64.decode(messageB64, Base64.DEFAULT));
                 logger.info("Decoding message to:" + jsonString);
-                UnityPlayer.UnitySendMessage("HyperCube", "ReceiveMessage", jsonString);
+                handler.handleMessage(jsonString);
             }
 
             @Override
             public void onError(Throwable t) {
-                logger.warning(t.toString());
                 Status status = Status.fromThrowable(t);
-                logger.log(Level.WARNING, "RouteChat Failed: {0}", status);
+                logger.warning("Client onError: " + status);
             }
 
             @Override
             public void onCompleted() {
-                logger.info("Finished RouteChat");
+                logger.info("Client onCompleted");
             }
         });
     }
 
-    public void sayHello() {
-        Channel channel = blockingStub.createChannel(Empty.getDefaultInstance());
+    public Channel createChannel() {
+        return blockingStub.createChannel(Empty.getDefaultInstance());
+    }
+
+    public void subscribe(String channelId) {
         blockingStub.subscribeChannel(
                 Add.newBuilder()
-                        .setChannelId(channel.getId())
+                        .setChannelId(channelId)
                         .setUserId(userId)
                         .build()
         );
-        String message = "{'text':'hello!'}";
-        logger.info("Saying hello for the first time!");
-        sendMessage(channel.getId(), userId, message);
-
-        eventSubscriptionStreamObserver.onCompleted();
     }
 
     public void sendMessage(String channelId, String userId, String messageContent) {
