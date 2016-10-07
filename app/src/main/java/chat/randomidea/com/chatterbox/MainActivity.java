@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import io.bigfast.MessagingOuterClass.Channel;
@@ -41,7 +42,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void sayHello(View view) {
-        String message = "{'text':'hello!'}";
+        EditText editText = (EditText) findViewById(R.id.chatterBox);
+        String message;
+        try {
+            message = "{'content':'" + editText.toString() + "'}";
+        } catch (NullPointerException exception) {
+            message = "{'content':'Hello!'}";
+        }
+
         chatClient.sendMessage(channel.getId(), ChatClient.userId, message);
     }
 }
