@@ -8,7 +8,7 @@
     tools:context="chat.randomidea.com.chatterbox.MainActivity">
 
     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:text="I'm a little teapot!"
         android:id="@+id/mainText" />
 
     <Button

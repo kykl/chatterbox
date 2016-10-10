@@ -29,11 +29,6 @@ public class MainActivity extends AppCompatActivity {
         chatClient = new ChatClient("messaging.rndmi.com", 8443, metadata, messageHandler);
         Log.i(chatClient.toString(), "Saying hello for the first time!");
 
-//        try {
-//            chatClient.shutdown();
-//        } catch (InterruptedException e) {
-//            Log.e(chatClient.toString(), e.getMessage());
-//        }
     }
 
     public void subscribe(View view) {
@@ -45,9 +40,9 @@ public class MainActivity extends AppCompatActivity {
         EditText editText = (EditText) findViewById(R.id.chatterBox);
         String message;
         try {
-            message = "{'content':'" + editText.toString() + "'}";
+            message = editText.getText().toString();
         } catch (NullPointerException exception) {
-            message = "{'content':'Hello!'}";
+            message = "Oops, GOT NPE";
         }
 
         chatClient.sendMessage(channel.getId(), ChatClient.userId, message);

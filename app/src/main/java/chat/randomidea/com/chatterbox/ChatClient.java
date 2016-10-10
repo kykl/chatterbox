@@ -88,10 +88,9 @@ public class ChatClient {
             @Override
             public void onNext(Message message) {
                 logger.info("Got message:" + message);
-                byte[] messageB64 = message.getContent().toByteArray();
-                String jsonString = new String(Base64.decode(messageB64, Base64.DEFAULT));
-                logger.info("Decoding message to:" + jsonString);
-                handler.handleMessage(jsonString);
+                byte[] bytes = message.getContent().toByteArray();
+                String byteString = new String(bytes);
+                handler.handleMessage(byteString);
             }
 
             @Override
@@ -125,9 +124,9 @@ public class ChatClient {
     }
 
     public void sendMessage(String channelId, String userId, String messageContent) {
-        byte[] b64Msg = Base64.encode(messageContent.getBytes(), Base64.DEFAULT);
-        ByteString byteStringContent = ByteString.copyFrom(b64Msg);
-        logger.info("Sending message: " + new String(b64Msg));
+        byte[] bytes = messageContent.getBytes();
+        ByteString byteStringContent = ByteString.copyFrom(bytes);
+        logger.info("Sending message: " + new String(bytes));
         eventSubscriptionStreamObserver.onNext(
                 Message.newBuilder()
                         .setChannelId(channelId)
