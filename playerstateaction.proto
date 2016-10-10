@@ -1,0 +1,44 @@
+package io.bigfast;
+
+message PlayerStateAction {
+    message Position {
+        optional float x = 1;
+        optional float y = 2;
+        optional float z = 3;
+    }
+
+    message Velocity {
+        optional float x = 1;
+        optional float y = 2;
+        optional float z = 3;
+    }
+
+    message GameState {
+        optional Position position = 1;
+        optional Velocity velocity = 2;
+    }
+
+    message Action {
+        oneof leftButton {
+            bool up = 1;
+            bool down = 2;
+            bool left = 3;
+            bool right = 4;
+        }
+        oneof rightButton {
+            bool gas = 5;
+            bool brake = 6;
+            bool jump = 7;
+            bool boost = 8;
+        }
+    }
+
+    optional string channelId = 1;
+    optional string userId = 2;
+    optional string playId = 3;
+    optional uint64 timestamp = 4;
+    optional GameState playerState = 5;
+    repeated GameState teamState = 6;
+    repeated GameState opponentState = 7;
+    optional Action playerAction = 8;
+}
