@@ -19,18 +19,15 @@ message PlayerStateAction {
     }
 
     message Action {
-        oneof leftButton {
-            bool up = 1;
-            bool down = 2;
-            bool left = 3;
-            bool right = 4;
-        }
-        oneof rightButton {
-            bool gas = 5;
-            bool brake = 6;
-            bool jump = 7;
-            bool boost = 8;
-        }
+        optional bool up = 1;
+        optional bool down = 2;
+        optional bool left = 3;
+        optional bool right = 4;
+
+        optional bool gas = 5;
+        optional bool brake = 6;
+        optional bool jump = 7;
+        optional bool boost = 8;
     }
 
     optional string channelId = 1;
