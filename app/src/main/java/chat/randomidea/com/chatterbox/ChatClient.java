@@ -26,7 +26,7 @@ import io.grpc.stub.StreamObserver;
  * To be used by Unity3D as a jar downstream
  */
 public class ChatClient {
-    public static final String userId = "18126";
+    public static final String userId = "18127";
     private static final Logger logger = Logger.getLogger(ChatClient.class.getName());
     private final ManagedChannel channel;
     private final MessagingGrpc.MessagingBlockingStub blockingStub;
@@ -107,7 +107,11 @@ public class ChatClient {
         });
     }
 
-    public Channel createChannel() {
+    public String createChannelGetId() {
+        return createChannel().getId();
+    }
+
+    public Channel createChannel(){
         return blockingStub.createChannel(Empty.getDefaultInstance());
     }
 
