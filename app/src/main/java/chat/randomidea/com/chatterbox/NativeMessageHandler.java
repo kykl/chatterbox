@@ -1,5 +1,6 @@
 package chat.randomidea.com.chatterbox;
 
+import android.util.Log;
 import android.widget.TextView;
 
 /**
@@ -15,6 +16,8 @@ class NativeMessageHandler implements MessageHandler {
     }
     @Override
     public void handleMessage(String jsonString) {
-        textView.append(jsonString);
+        Log.i("ChatClient", "handleMessage: " + jsonString);
+
+        textView.append("\n" + jsonString);
     }
 }

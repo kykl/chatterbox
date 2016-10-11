@@ -29,6 +29,9 @@ public class MainActivity extends AppCompatActivity {
         chatClient = new ChatClient("messaging.rndmi.com", 8443, metadata, messageHandler);
         Log.i(chatClient.toString(), "Saying hello for the first time!");
 
+        channel = chatClient.createChannel();
+        chatClient.subscribe(channel.getId());
+        chatClient.sendMessage(channel.getId(), ChatClient.userId, "Hello!");
     }
 
     public void subscribe(View view) {
