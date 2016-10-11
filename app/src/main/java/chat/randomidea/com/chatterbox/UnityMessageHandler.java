@@ -1,5 +1,9 @@
 package chat.randomidea.com.chatterbox;
 
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+
 import com.unity3d.player.UnityPlayer;
 
 /**
@@ -7,7 +11,7 @@ import com.unity3d.player.UnityPlayer;
  * Pass in name of GameObject and the receive method
  */
 
-class UnityMessageHandler implements MessageHandler {
+class UnityMessageHandler extends Handler {
     private String gameObject;
     private String receiveMethod;
 
@@ -17,7 +21,10 @@ class UnityMessageHandler implements MessageHandler {
     }
 
     @Override
-    public void handleMessage(String jsonString) {
-        UnityPlayer.UnitySendMessage(gameObject, receiveMethod, jsonString);
+    public void handleMessage(Message message) {
+        String stringMessage = (String) message.obj;
+        Log.i("ChatClient", "handleMessage: " + stringMessage);
+        UnityPlayer.currentActivity.getMainLooper();
+        UnityPlayer.UnitySendMessage(gameObject, receiveMethod, stringMessage);
     }
 }

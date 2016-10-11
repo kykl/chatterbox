@@ -2,6 +2,7 @@ package chat.randomidea.com.chatterbox;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -19,12 +20,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        TextView textView = (TextView) findViewById(R.id.mainText);
+        final TextView textView = (TextView) findViewById(R.id.mainText);
         Context context = getApplicationContext();
         String authorization = context.getString(R.string.authorization);
         String session = context.getString(R.string.session);
         Metadata metadata = ChatClient.createMetadata(authorization, session);
-        NativeMessageHandler messageHandler = new NativeMessageHandler(textView);
+        NativeMessageHandler messageHandler = new NativeMessageHandler(textView, Looper.getMainLooper());
 
         chatClient = new ChatClient("messaging.rndmi.com", 8443, metadata, messageHandler);
         Log.i(chatClient.toString(), "Saying hello for the first time!");

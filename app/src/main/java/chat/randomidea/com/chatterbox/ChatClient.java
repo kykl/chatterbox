@@ -1,5 +1,6 @@
 package chat.randomidea.com.chatterbox;
 
+import android.os.Handler;
 import android.util.Base64;
 
 import com.google.protobuf.ByteString;
@@ -32,9 +33,9 @@ public class ChatClient {
     private final MessagingGrpc.MessagingBlockingStub blockingStub;
     private final MessagingGrpc.MessagingStub asyncStub;
     private final StreamObserver<Message> eventSubscriptionStreamObserver;
-    private final MessageHandler handler;
+    private final Handler handler;
 
-    ChatClient(String host, int port, Metadata metadata, MessageHandler messageHandler) {
+    ChatClient(String host, int port, Metadata metadata, Handler messageHandler) {
         logger.info("Running chat client for " + host + ":" + port);
         channel = ManagedChannelBuilder.forAddress(host, port).build();
         handler = messageHandler;
@@ -90,7 +91,7 @@ public class ChatClient {
                 logger.info("Got message:" + message);
                 byte[] bytes = message.getContent().toByteArray();
                 String byteString = new String(bytes);
-                handler.handleMessage(byteString);
+                handler.obtainMessage(0, byteString).sendToTarget();
             }
 
             @Override

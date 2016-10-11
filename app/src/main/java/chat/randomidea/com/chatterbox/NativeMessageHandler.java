@@ -1,5 +1,8 @@
 package chat.randomidea.com.chatterbox;
 
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -9,15 +12,18 @@ import android.widget.TextView;
  * Use for debugging purposes
  */
 
-class NativeMessageHandler implements MessageHandler {
+class NativeMessageHandler extends Handler {
     private TextView textView;
-    NativeMessageHandler(TextView textView) {
+
+    NativeMessageHandler(TextView textView, Looper looper) {
+        super(looper);
         this.textView = textView;
     }
-    @Override
-    public void handleMessage(String jsonString) {
-        Log.i("ChatClient", "handleMessage: " + jsonString);
 
-        textView.append("\n" + jsonString);
+    @Override
+    public void handleMessage(Message message) {
+        Log.i("ChatClient", "handleMessage: " + message.obj);
+
+        textView.append("\n" + message.obj);
     }
 }
