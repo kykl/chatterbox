@@ -125,9 +125,9 @@ public class ChatClient {
     }
 
     public void sendMessage(String channelId, String userId, String messageContent) {
-        byte[] bytes = messageContent.getBytes();
+        byte[] bytes = messageContent.getBytes(Charsets.ISO_8859_1);
         ByteString byteStringContent = ByteString.copyFrom(bytes);
-        logger.info("Sending message: " + new String(bytes));
+        logger.info("Sending message: " + new String(bytes, Charsets.ISO_8859_1));
         eventSubscriptionStreamObserver.onNext(
                 Message.newBuilder()
                         .setChannelId(channelId)
