@@ -6,6 +6,11 @@ import android.os.Message;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.google.common.base.Charsets;
+import com.google.protobuf.InvalidProtocolBufferException;
+
+import io.bigfast.Playerstateaction.PlayerStateAction;
+
 /**
  * Basic Handler for json slug
  * Appends to textView
@@ -23,7 +28,16 @@ class NativeMessageHandler extends Handler {
     @Override
     public void handleMessage(Message message) {
         Log.i("ChatClient", "handleMessage: " + message.obj);
+        String messageString = (String) message.obj;
+        byte[] bytes = messageString.getBytes(Charsets.ISO_8859_1);
+        PlayerStateAction playerStateAction;
+        try {
+            playerStateAction = PlayerStateAction.parseFrom(bytes);
 
-        textView.append("\n" + message.obj);
+        } catch (InvalidProtocolBufferException invalidProtocolBufferException) {
+            playerStateAction = PlayerStateAction.getDefaultInstance();
+        }
+
+        textView.append("\n" + playerStateAction.toString());
     }
 }

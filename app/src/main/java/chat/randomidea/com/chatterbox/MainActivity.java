@@ -9,7 +9,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.common.base.Charsets;
+
 import io.bigfast.MessagingOuterClass.Channel;
+import io.bigfast.Playerstateaction.PlayerStateAction;
+import io.bigfast.Playerstateaction.PlayerStateAction.GameState;
 import io.grpc.Metadata;
 
 public class MainActivity extends AppCompatActivity {
@@ -32,7 +36,24 @@ public class MainActivity extends AppCompatActivity {
 
         channel = chatClient.createChannel();
         chatClient.subscribe(channel.getId());
-        chatClient.sendMessage(channel.getId(), ChatClient.userId, "Hello!");
+
+        PlayerStateAction playerStateAction = PlayerStateAction.newBuilder()
+                .setChannelId(channel.getId())
+                .setUserId(ChatClient.userId)
+                .setPlayId("Play123")
+                .setPlayerState(
+                        GameState.newBuilder()
+                                .setPosition(PlayerStateAction.Position.newBuilder()
+                                        .setX(1.0f)
+                                        .setY(2.0f)
+                                        .setZ(3.0f)
+                                        .build()
+                                )
+                                .build()
+                )
+                .build();
+
+        chatClient.sendMessage(channel.getId(), ChatClient.userId, encodeData(playerStateAction));
     }
 
     public void subscribe(View view) {
@@ -41,14 +62,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void sayHello(View view) {
-        EditText editText = (EditText) findViewById(R.id.chatterBox);
         String message;
         try {
+            EditText editText = (EditText) findViewById(R.id.chatterBox);
             message = editText.getText().toString();
         } catch (NullPointerException exception) {
-            message = "Oops, GOT NPE";
+            message = "I'm a bigger teapot!";
         }
 
         chatClient.sendMessage(channel.getId(), ChatClient.userId, message);
+    }
+
+    private String encodeData(PlayerStateAction playerStateAction) {
+        byte[] bytes = playerStateAction.toByteArray();
+        return new String(bytes, Charsets.ISO_8859_1);
     }
 }
