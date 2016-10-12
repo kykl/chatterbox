@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package io.bigfast;
+
+message PlayerStateAction {
+    message Position {
+        float x = 1;
+        float y = 2;
+        float z = 3;
+    }
+
+    message Velocity {
+        float x = 1;
+        float y = 2;
+        float z = 3;
+    }
+
+    message GameState {
+        Position position = 1;
+        Velocity velocity = 2;
+    }
+
+    message Action {
+        oneof leftAction {
+            bool up = 1;
+            bool down = 2;
+            bool left = 3;
+            bool right = 4;
+        }
+
+        oneof rightAction {
+            bool gas = 5;
+            bool brake = 6;
+            bool jump = 7;
+            bool boost = 8;
+        }
+    }
+
+    string channelId = 1;
+    string userId = 2;
+    string playId = 3;
+    uint64 timestamp = 4;
+    GameState playerState = 5;
+    repeated GameState teamState = 6;
+    repeated GameState opponentState = 7;
+    Action playerAction = 8;
+}
