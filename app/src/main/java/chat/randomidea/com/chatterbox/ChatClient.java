@@ -2,6 +2,7 @@ package chat.randomidea.com.chatterbox;
 
 import android.os.Handler;
 
+import com.google.common.base.Charsets;
 import com.google.protobuf.ByteString;
 
 import java.util.concurrent.TimeUnit;
@@ -89,7 +90,7 @@ public class ChatClient {
             public void onNext(Message message) {
                 logger.info("Got message:" + message);
                 byte[] bytes = message.getContent().toByteArray();
-                String byteString = new String(bytes);
+                String byteString = new String(bytes, Charsets.ISO_8859_1);
                 handler.obtainMessage(0, byteString).sendToTarget();
             }
 
