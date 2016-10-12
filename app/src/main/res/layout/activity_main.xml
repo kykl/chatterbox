@@ -8,5 +8,47 @@
     tools:context="chat.randomidea.com.chatterbox.MainActivity">
 
     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:text="I'm a little teapot!"
+        android:id="@+id/mainText" />
+
+    <Button
+        android:text="Say Hello"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="71dp"
+        android:layout_marginEnd="71dp"
+        android:id="@+id/sendMessageButton"
+        android:onClick="sayHello"
+        android:layout_alignBaseline="@+id/subscribeButton"
+        android:layout_alignBottom="@+id/subscribeButton"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:visibility="visible" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:layout_above="@+id/sendMessageButton"
+        android:layout_marginBottom="13dp"
+        android:id="@+id/chatterBox"
+        tools:text="Type here"
+        android:layout_alignLeft="@+id/subscribeButton"
+        android:layout_alignStart="@+id/subscribeButton" />
+
+    <Button
+        android:text="Subscribe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/subscribeButton"
+        android:onClick="subscribe"
+        android:visibility="visible"
+        android:layout_marginRight="22dp"
+        android:layout_marginEnd="22dp"
+        android:layout_marginBottom="103dp"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/sendMessageButton"
+        android:layout_toStartOf="@+id/sendMessageButton" />
+
 </RelativeLayout>
