@@ -16,6 +16,7 @@ class UnityMessageHandler extends Handler {
     private String receiveMethod;
 
     UnityMessageHandler(String gameObject, String receiveMethod) {
+        super(UnityPlayer.currentActivity.getMainLooper());
         this.gameObject = gameObject;
         this.receiveMethod = receiveMethod;
     }
@@ -24,7 +25,7 @@ class UnityMessageHandler extends Handler {
     public void handleMessage(Message message) {
         String stringMessage = (String) message.obj;
         Log.i("ChatClient", "handleMessage: " + stringMessage);
-        UnityPlayer.currentActivity.getMainLooper();
+
         UnityPlayer.UnitySendMessage(gameObject, receiveMethod, stringMessage);
     }
 }

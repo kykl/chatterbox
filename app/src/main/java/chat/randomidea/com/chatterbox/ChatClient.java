@@ -1,7 +1,6 @@
 package chat.randomidea.com.chatterbox;
 
 import android.os.Handler;
-import android.util.Base64;
 
 import com.google.protobuf.ByteString;
 
@@ -111,7 +110,7 @@ public class ChatClient {
         return createChannel().getId();
     }
 
-    public Channel createChannel(){
+    public Channel createChannel() {
         return blockingStub.createChannel(Empty.getDefaultInstance());
     }
 
