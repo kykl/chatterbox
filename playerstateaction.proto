@@ -1,41 +1,47 @@
+syntax = "proto3";
+
 package io.bigfast;
 
 message PlayerStateAction {
     message Position {
-        optional float x = 1;
-        optional float y = 2;
-        optional float z = 3;
+        float x = 1;
+        float y = 2;
+        float z = 3;
     }
 
     message Velocity {
-        optional float x = 1;
-        optional float y = 2;
-        optional float z = 3;
+        float x = 1;
+        float y = 2;
+        float z = 3;
     }
 
     message GameState {
-        optional Position position = 1;
-        optional Velocity velocity = 2;
+        Position position = 1;
+        Velocity velocity = 2;
     }
 
     message Action {
-        optional bool up = 1;
-        optional bool down = 2;
-        optional bool left = 3;
-        optional bool right = 4;
+        oneof leftAction {
+            bool up = 1;
+            bool down = 2;
+            bool left = 3;
+            bool right = 4;
+        }
 
-        optional bool gas = 5;
-        optional bool brake = 6;
-        optional bool jump = 7;
-        optional bool boost = 8;
+        oneof rightAction {
+            bool gas = 5;
+            bool brake = 6;
+            bool jump = 7;
+            bool boost = 8;
+        }
     }
 
-    optional string channelId = 1;
-    optional string userId = 2;
-    optional string playId = 3;
-    optional uint64 timestamp = 4;
-    optional GameState playerState = 5;
+    string channelId = 1;
+    string userId = 2;
+    string playId = 3;
+    uint64 timestamp = 4;
+    GameState playerState = 5;
     repeated GameState teamState = 6;
     repeated GameState opponentState = 7;
-    optional Action playerAction = 8;
+    Action playerAction = 8;
 }
